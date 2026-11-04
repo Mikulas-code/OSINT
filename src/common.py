@@ -12,5 +12,5 @@ TABLES = ROOT / "output" / "tables"
 MANUAL_OVERRIDES = ROOT / "manual_overrides.csv"
 
 # Study period for RQ1/RQ2 (inclusive)
-PERIOD_START = "2025-01-01"
+PERIOD_START = "2022-02-24"  # start of the Russian invasion of Ukraine
 PERIOD_END = "2026-09-30"

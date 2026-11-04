@@ -6,7 +6,7 @@ Zadání datové analýzy pro semestrální projekt z předmětu Open Source Int
 
 Tým zkoumá satelitní aktivitu USA a Ruska. Datová analýza odpovídá na tyto výzkumné otázky:
 
-- **RQ1:** How many satellites did the US and Russia launch between January 2025 and September 2026, and how many of them can be identified as military or civil from open orbital data?
+- **RQ1:** How many satellites did the US and Russia launch between 24 February 2022 (start of the Russian invasion of Ukraine) and September 2026, and how many of them can be identified as military or civil from open orbital data?
 - **RQ2 (hypotéza H1):** Both the USA and Russia focus on LEO.
 - **RQ3 (doplňková analýza):** Were there any documented attacks on satellites? → dokládáme vlastními daty na troskách po ruském ASAT testu z listopadu 2021.
 
@@ -51,7 +51,7 @@ Přihlášení: `POST https://www.space-track.org/ajaxauth/login` s parametry `i
 Dotaz na družice (payloady) USA a Ruska vypuštěné ve sledovaném období:
 
 ```
-https://www.space-track.org/basicspacedata/query/class/satcat/LAUNCH/2025-01-01--2026-09-30/OBJECT_TYPE/PAYLOAD/COUNTRY/US,CIS/format/csv
+https://www.space-track.org/basicspacedata/query/class/satcat/LAUNCH/2022-02-24--2026-09-30/OBJECT_TYPE/PAYLOAD/COUNTRY/US,CIS/format/csv
 ```
 
 - `CIS` je v Space-Tracku označení pro Rusko (bývalé SSSR).
@@ -118,7 +118,7 @@ Popisky grafů anglicky (report je v angličtině). Grafy musí být čitelné i
 
 **Tabulka `rq1_counts.csv`:** řádky = orbital launches, payloads total, military, civil, commercial, Starlink, unknown; sloupce = USA, USA excl. Starlink, Russia.
 
-**Graf 1 `fig1_monthly.png`:** počet vypuštěných družic po měsících (01/2025–09/2026). Dva panely nebo dvě verze: s Starlinkem a bez něj, jinak budou ruská čísla v grafu neviditelná.
+**Graf 1 `fig1_monthly.png`:** počet vypuštěných družic po čtvrtletích (Q1/2022–Q3/2026; ~56 měsíců by bylo po měsících nečitelné). Dva panely nebo dvě verze: s Starlinkem a bez něj, jinak budou ruská čísla v grafu neviditelná.
 
 ### RQ2
 
