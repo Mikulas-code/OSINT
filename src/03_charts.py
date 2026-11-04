@@ -87,6 +87,45 @@ def rq1_table(df):
     print("RQ1 counts:\n" + table.to_string() + "\n")
 
 
+CATEGORIES = ["military", "civil", "commercial", "starlink", "unknown"]
+
+
+def rq1_yearly(df):
+    """Payloads per year by country and category (2022 starts on PERIOD_START)."""
+    df = df.assign(year=df["LAUNCH"].str[:4],
+                   country=df["COUNTRY"].map(COUNTRY_LABEL))
+    table = pd.crosstab([df["country"], df["category"]], df["year"], margins=True, margins_name="Total")
+    table = table.reindex([(c, cat) for c in ["USA", "Russia"] for cat in CATEGORIES] + [("Total", "")])
+    table = table.dropna(how="all").fillna(0).astype(int)
+    table.to_csv(TABLES / "rq1_yearly.csv")
+    print("RQ1 payloads per year:\n" + table.to_string() + "\n")
+
+
+# GCAT mission codes -> readable names. GCAT adds '?' (uncertain) or '*' to some
+# codes; we keep only the main code before these marks.
+MISSIONS = {
+    "IMG": "Imaging / reconnaissance",
+    "SIG": "Signals intelligence",
+    "COM": "Communications",
+    "EW": "Missile early warning",
+    "NAV": "Navigation",
+    "TECH": "Technology demonstration",
+}
+
+
+def rq1_military_missions(df):
+    """Military satellites by mission type (from GCAT 'Category')."""
+    mil = df[df["category"] == "military"].copy()
+    code = mil["gcat_category"].fillna("").str.split("/").str[0].str.rstrip("?*")
+    mil["mission"] = code.map(MISSIONS).fillna("Other / not in GCAT")
+    table = pd.crosstab(mil["mission"], mil["COUNTRY"].map(COUNTRY_LABEL))[["USA", "Russia"]]
+    order = list(MISSIONS.values()) + ["Other / not in GCAT"]
+    table = table.reindex(order, fill_value=0)
+    table.loc["Total"] = table.sum()
+    table.to_csv(TABLES / "rq1_military_missions.csv")
+    print("RQ1 military satellites by mission:\n" + table.to_string() + "\n")
+
+
 def fig1_quarterly(df):
     """Payloads launched per quarter, with and without Starlink (two panels)."""
     df = df.copy()
@@ -226,6 +265,8 @@ def main():
     TABLES.mkdir(parents=True, exist_ok=True)
 
     rq1_table(df)
+    rq1_yearly(df)
+    rq1_military_missions(df)
     fig1_quarterly(df)
     counts, shares = rq2_table(df)
     fig2_orbits(counts, shares)

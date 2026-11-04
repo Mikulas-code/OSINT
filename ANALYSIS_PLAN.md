@@ -6,9 +6,10 @@ Zadání datové analýzy pro semestrální projekt z předmětu Open Source Int
 
 Tým zkoumá satelitní aktivitu USA a Ruska. Datová analýza odpovídá na tyto výzkumné otázky:
 
-- **RQ1:** How many satellites did the US and Russia launch between 24 February 2022 (start of the Russian invasion of Ukraine) and September 2026, and how many of them can be identified as military or civil from open orbital data?
-- **RQ2 (hypotéza H1):** Both the USA and Russia focus on LEO.
-- **RQ3 (doplňková analýza):** Were there any documented attacks on satellites? → dokládáme vlastními daty na troskách po ruském ASAT testu z listopadu 2021.
+- **RQ1:** How many satellites did the US and Russia launch between 24 February 2022 and 30 September 2026, and how many of them can be identified as military, civil or commercial from open sources?
+- **RQ2 (hypotéza H1):** Between 24 February 2022 and 30 September 2026, both the USA and Russia launched the majority of their satellites (including military ones) into LEO.
+- **RQ3:** Were there any documented attacks on satellites between 2021 and 2026, and what were their consequences? → hlavně rešerše; vlastní data o troskách po ruském ASAT testu z listopadu 2021 slouží jako podpora (důsledky). Případně později rozšířit o další incidenty.
+- **RQ4:** Which space incidents between 2021 and 2026 increased tension between the USA and Russia?
 
 RQ4 je čistě rešeršní, analýza ji neřeší.
 

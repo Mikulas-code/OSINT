@@ -1,0 +1,11 @@
+country,category,2022,2023,2024,2025,2026,Total
+USA,military,33,42,127,149,162,513
+USA,civil,14,13,17,23,12,79
+USA,commercial,95,186,125,364,323,1093
+USA,starlink,1529,1984,1964,3169,2167,10813
+USA,unknown,1,0,0,0,11,12
+Russia,military,15,10,5,20,21,71
+Russia,civil,5,11,27,10,5,58
+Russia,commercial,3,0,10,4,32,49
+Russia,unknown,1,0,0,0,1,2
+Total,,1696,2246,2275,3739,2734,12690
