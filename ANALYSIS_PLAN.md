@@ -118,7 +118,7 @@ Popisky grafů anglicky (report je v angličtině). Grafy musí být čitelné i
 
 **Tabulka `rq1_counts.csv`:** řádky = orbital launches, payloads total, military, civil, commercial, Starlink, unknown; sloupce = USA, USA excl. Starlink, Russia.
 
-**Graf 1 `fig1_monthly.png`:** počet vypuštěných družic po čtvrtletích (Q1/2022–Q3/2026; ~56 měsíců by bylo po měsících nečitelné). Dva panely nebo dvě verze: s Starlinkem a bez něj, jinak budou ruská čísla v grafu neviditelná.
+**Graf 1 `fig1_quarterly.png`:** počet vypuštěných družic po čtvrtletích (Q1/2022–Q3/2026; ~56 měsíců by bylo po měsících nečitelné). Dva panely nebo dvě verze: s Starlinkem a bez něj, jinak budou ruská čísla v grafu neviditelná.
 
 ### RQ2
 
@@ -147,7 +147,7 @@ https://www.space-track.org/basicspacedata/query/class/satcat/INTLDES/~~1982-092
 | Výstup | RQ | Kapitola reportu |
 |---|---|---|
 | `rq1_counts.csv` | RQ1 | 4.1.1 (Table 3) |
-| `fig1_monthly.png` | RQ1 | 4.1.1 |
+| `fig1_quarterly.png` | RQ1 | 4.1.1 |
 | `fig2_orbits.png`, `rq2_orbits.csv` | RQ2 | 4.2 |
 | `fig3_scatter.png` (volitelné) | RQ2 | 4.2 |
 | `fig4_debris.png` (volitelné) | RQ3 | 4.3.1 |

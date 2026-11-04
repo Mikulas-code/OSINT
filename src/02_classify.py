@@ -22,7 +22,7 @@ Usage (from project root):  python src/02_classify.py
 
 import pandas as pd
 
-from common import DATA_PROCESSED, DATA_RAW, MANUAL_OVERRIDES
+from common import DATA_PROCESSED, DATA_RAW, MANUAL_OVERRIDES, newest_file
 
 # ---------------------------------------------------------------------------
 # Settings
@@ -66,14 +66,6 @@ GEO_MAX_ECCENTRICITY = 0.05
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-
-def newest_file(folder, pattern):
-    """Return the newest file matching pattern (file names contain the date)."""
-    files = sorted(folder.glob(pattern))
-    if not files:
-        raise SystemExit(f"No file {pattern} in {folder}")
-    return files[-1]
-
 
 def load_gcat():
     """Load GCAT payload catalog and return NORAD id, Class and Category."""
