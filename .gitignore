@@ -1,0 +1,20 @@
+# Credentials - never commit
+.env
+
+# Space-Track terms forbid redistribution of the data -> keep all data local.
+# Only aggregated tables and charts (output/) go into git.
+data/raw/*
+data/processed/*
+!data/**/.gitkeep
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
