@@ -31,6 +31,18 @@ QUERY = (
     "/format/csv"
 )
 
+# Satellites deployed from the ISS get the ISS designator (1998-067xx) and the
+# ISS launch date (1998-11-20), so the query above misses them. We download all
+# of them; 02_classify.py picks those that reached the ISS in the study period.
+ISS_QUERY = (
+    "/basicspacedata/query/class/satcat"
+    "/INTLDES/~~1998-067"
+    "/OBJECT_TYPE/PAYLOAD"
+    "/COUNTRY/US,CIS"
+    "/orderby/NORAD_CAT_ID asc"
+    "/format/csv"
+)
+
 # Columns the later steps rely on (see ANALYSIS_PLAN.md, step 1)
 EXPECTED_COLUMNS = [
     "NORAD_CAT_ID", "OBJECT_NAME", "INTLDES", "COUNTRY", "LAUNCH", "SITE",
@@ -47,6 +59,14 @@ def main():
     else:
         out_file.write_text(spacetrack_query(QUERY), encoding="utf-8")
         print(f"Saved to {out_file}")
+
+    iss_file = DATA_RAW / f"iss_deployed_{date.today().isoformat()}.csv"
+    if iss_file.exists():
+        print(f"{iss_file.name} already exists - skipping download.")
+    else:
+        iss_file.write_text(spacetrack_query(ISS_QUERY), encoding="utf-8")
+        print(f"Saved to {iss_file}")
+    print(f"ISS-deployed payloads (all years): {len(pd.read_csv(iss_file))}")
 
     # --- Quick check of what we downloaded ---
     df = pd.read_csv(out_file)

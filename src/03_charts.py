@@ -117,9 +117,9 @@ def rq1_military_missions(df):
     """Military satellites by mission type (from GCAT 'Category')."""
     mil = df[df["category"] == "military"].copy()
     code = mil["gcat_category"].fillna("").str.split("/").str[0].str.rstrip("?*")
-    mil["mission"] = code.map(MISSIONS).fillna("Other / not in GCAT")
+    mil["mission"] = code.map(MISSIONS).fillna("Not yet in GCAT / other")
     table = pd.crosstab(mil["mission"], mil["COUNTRY"].map(COUNTRY_LABEL))[["USA", "Russia"]]
-    order = list(MISSIONS.values()) + ["Other / not in GCAT"]
+    order = list(MISSIONS.values()) + ["Not yet in GCAT / other"]
     table = table.reindex(order, fill_value=0)
     table.loc["Total"] = table.sum()
     table.to_csv(TABLES / "rq1_military_missions.csv")
@@ -223,14 +223,18 @@ def evaluate_h1(shares):
     for name, value in leo.items():
         print(f"  {name:20s} {value:6.1%}")
 
-    overall = leo["USA excl. Starlink"] > LEO_THRESHOLD and leo["Russia"] > LEO_THRESHOLD
-    military = leo["US military"] > LEO_THRESHOLD and leo["Russian military"] > LEO_THRESHOLD
-    if overall and military:
-        result = "CONFIRMED (also for military satellites)"
-    elif overall:
-        result = "PARTIALLY CONFIRMED (holds overall, not for military satellites)"
+    # H1 wording includes military satellites, so all four groups are tested.
+    # Share = LEO / all payloads in the group, including those with unknown orbit
+    # (conservative). Starlink is left out so it does not decide the US result.
+    tested = ["USA excl. Starlink", "Russia", "US military", "Russian military"]
+    passed = [name for name in tested if leo[name] > LEO_THRESHOLD]
+    if len(passed) == len(tested):
+        result = "CONFIRMED (all tested groups above 50 %)"
+    elif passed:
+        failed = [name for name in tested if name not in passed]
+        result = f"PARTIALLY CONFIRMED (not met for: {', '.join(failed)})"
     else:
-        result = "REJECTED"
+        result = "REJECTED (no tested group above 50 %)"
     print(f"H1 result: {result}\n")
 
 

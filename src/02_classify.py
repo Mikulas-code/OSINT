@@ -2,8 +2,10 @@
 
 Input:
   data/raw/satcat_*.csv          (newest file, from 01_download.py)
+  data/raw/iss_deployed_*.csv    (newest file, from 01_download.py)
   data/raw/gcat/psatcat_*.tsv    (newest file, GCAT payload catalog by J. McDowell,
                                   https://planet4589.org/space/gcat/)
+  data/raw/gcat/satcat_*.tsv     (GCAT main catalog, real launch dates of ISS-deployed sats)
   manual_overrides.csv           (hand-made corrections, win over everything)
 
 Output:
@@ -22,7 +24,7 @@ Usage (from project root):  python src/02_classify.py
 
 import pandas as pd
 
-from common import DATA_PROCESSED, DATA_RAW, MANUAL_OVERRIDES, newest_file
+from common import DATA_PROCESSED, DATA_RAW, MANUAL_OVERRIDES, PERIOD_END, PERIOD_START, newest_file
 
 # ---------------------------------------------------------------------------
 # Settings
@@ -83,6 +85,38 @@ def load_gcat():
     return gcat[["NORAD_CAT_ID", "gcat_class", "gcat_category"]]
 
 
+def load_iss_deployed(gcat_payload_ids):
+    """Return ISS-deployed payloads whose cargo flight launched in the study period.
+
+    Space-Track gives them the ISS designator and launch date (1998). GCAT's main
+    catalog has the real launch date of the cargo flight (LDate) and its
+    designator (Launch_Tag), so we take those from GCAT.
+    Objects that GCAT does not list as payloads (e.g. items thrown away during
+    spacewalks) are dropped.
+    """
+    iss = pd.read_csv(newest_file(DATA_RAW, "iss_deployed_*.csv"))
+    not_payload = ~iss["NORAD_CAT_ID"].isin(gcat_payload_ids)
+    print(f"ISS objects dropped (not a payload in GCAT): {not_payload.sum()}")
+    iss = iss[~not_payload]
+    path = newest_file(DATA_RAW / "gcat", "satcat_*.tsv")
+    gcat = pd.read_csv(path, sep="\t", skiprows=[1], dtype=str)
+    gcat.columns = [c.lstrip("#").strip() for c in gcat.columns]
+    gcat = gcat.apply(lambda col: col.str.strip())
+    gcat = gcat[gcat["Satcat"].str.match(r"^\d+$", na=False)].copy()
+    gcat["NORAD_CAT_ID"] = gcat["Satcat"].astype(int)
+
+    iss = iss.merge(gcat[["NORAD_CAT_ID", "LDate", "Launch_Tag"]], on="NORAD_CAT_ID", how="left")
+    print(f"ISS-deployed payloads (all years): {len(iss)}, without GCAT date: {iss['LDate'].isna().sum()}")
+
+    # GCAT date '2022 Jun  3' (sometimes with time or '?') -> keep year, month, day
+    ldate = pd.to_datetime(iss["LDate"].str.split().str[:3].str.join(" "), format="%Y %b %d")
+    iss["LAUNCH"] = ldate.dt.strftime("%Y-%m-%d")
+    iss = iss[(iss["LAUNCH"] >= PERIOD_START) & (iss["LAUNCH"] <= PERIOD_END)].copy()
+    iss["launch_id"] = iss["Launch_Tag"]
+    print(f"ISS-deployed payloads launched in study period: {len(iss)}")
+    return iss.drop(columns=["LDate", "Launch_Tag"])
+
+
 def category_from_name(row):
     for country, prefix, category in NAME_RULES:
         if row["COUNTRY"] == country and row["OBJECT_NAME"].startswith(prefix):
@@ -127,8 +161,16 @@ def main():
     df["launch_id"] = df["INTLDES"].str.extract(r"^(\d{4}-\d{3})")[0]
     print(f"Records without launch id: {df['launch_id'].isna().sum()}")
 
-    # --- 2b) Category ---
     gcat = load_gcat()
+
+    # Add satellites deployed from the ISS (launch id = their cargo flight)
+    iss = load_iss_deployed(gcat["NORAD_CAT_ID"])
+    df["iss_deployed"] = False
+    iss["iss_deployed"] = True
+    df = pd.concat([df, iss], ignore_index=True)
+    print(f"Total records: {len(df)}")
+
+    # --- 2b) Category ---
     df = df.merge(gcat, on="NORAD_CAT_ID", how="left")
     print(f"Matched in GCAT: {df['gcat_class'].notna().sum()} of {len(df)}")
 
@@ -146,6 +188,7 @@ def main():
         & df["gcat_category"].fillna("").str.startswith("NAV")
     )
     df.loc[df["is_glonass"], "category"] = GLONASS_CATEGORY
+    df.loc[df["is_glonass"], "category_source"] = "glonass"
     print(f"GLONASS satellites: {df['is_glonass'].sum()} -> '{GLONASS_CATEGORY}'")
 
     # Manual overrides win over everything

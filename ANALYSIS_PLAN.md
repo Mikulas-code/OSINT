@@ -81,7 +81,7 @@ Pravidla podle `OBJECT_NAME`, v tomto pořadí:
 | obě | záznam je v `manual_overrides.csv` | hodnota ze souboru (má přednost před vším výše) |
 | obě | ostatní | `unknown` |
 
-Doplnění `unknown`: zkusit GCAT od Jonathana McDowella (planet4589.org, soubor s katalogem payloadů). Nejdřív stáhnout, vypsat hlavičky a ukázat, které pole obsahuje kategorii nebo vlastníka družice; teprve potom navrhnout mapování. Spojovat přes NORAD číslo. Co zůstane nezařazené, vypsat do `output/tables/unclassified.csv` k ruční kontrole.
+Doplnění `unknown`: zkusit GCAT od Jonathana McDowella (planet4589.org, soubor s katalogem payloadů). Nejdřív stáhnout, vypsat hlavičky a ukázat, které pole obsahuje kategorii nebo vlastníka družice; teprve potom navrhnout mapování. Spojovat přes NORAD číslo. Co zůstane nezařazené, vypsat do `data/processed/unclassified.csv` k ruční kontrole (obsahuje jednotlivé záznamy, proto ne do `output/`).
 
 **Otevřené rozhodnutí:** ruské navigační družice GLONASS mají v katalogu název `COSMOS xxxx`. Nastavit konstantu `GLONASS_CATEGORY` (výchozí `military`) a GLONASS družice identifikovat přes GCAT nebo ruční seznam. Výsledné rozhodnutí tým uvede v metodice.
 
@@ -127,7 +127,7 @@ Popisky grafů anglicky (report je v angličtině). Grafy musí být čitelné i
 
 **Tabulka `rq2_orbits.csv`:** stejná data v číslech.
 
-**Vyhodnocení hypotézy H1:** skript vypíše podíl LEO pro každou skupinu a výsledek pravidla: H1 je potvrzena, pokud je podíl LEO nad 50 % u USA (bez Starlinku) i u Ruska. Jinak zamítnuta nebo částečně potvrzena (např. platí celkově, ale ne pro vojenské družice).
+**Vyhodnocení hypotézy H1:** skript vypíše podíl LEO pro každou skupinu (LEO / všechny payloady skupiny, včetně neznámé orbity) a výsledek pravidla: H1 je potvrzena, pokud je podíl LEO nad 50 % u všech čtyř skupin (USA bez Starlinku, Rusko, US military, Russian military). Částečně potvrzena, pokud jen u některých; zamítnuta, pokud u žádné.
 
 **Graf 3 `fig3_scatter.png` (volitelný):** inklinace (osa x) proti výšce apogea (osa y, logaritmická), tvar nebo odstín bodu podle země.
 
